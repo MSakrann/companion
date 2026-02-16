@@ -4,13 +4,16 @@
 
 import { Router, Response } from 'express';
 import { getFirestore } from 'firebase-admin/firestore';
+import { initFirebaseAdmin } from '../lib/firebase';
 import { requireAuth, type AuthRequest } from '../auth';
 import { createRecordingBodySchema } from '../validators';
 import { createRecording as createRecordingDoc, getRecording, createJob } from '../firestore';
-import { fileExists } from '../storage';
+import { fileExists, getBucket } from '../storage';
 import { enqueueProcessRecording } from '../jobs';
 import { getLogger } from '../lib/logger';
+import { getConfig } from '../config';
 
+initFirebaseAdmin();
 const logger = getLogger('api');
 const db = getFirestore();
 
@@ -49,7 +52,11 @@ router.post('/v1/recordings/:recordingId/finalize', requireAuth, async (req: Aut
       res.status(403).json({ error: 'forbidden' });
       return;
     }
+    const bucket = getBucket();
+    const bucketName = bucket?.name ?? getConfig().FIREBASE_STORAGE_BUCKET ?? 'unknown';
+    logger.info({ recordingId, audioPath: recording.audioPath, bucket: bucketName }, 'Checking audio file exists');
     const exists = await fileExists(recording.audioPath);
+    logger.info({ recordingId, exists }, 'fileExists result');
     if (!exists) {
       res.status(400).json({ error: 'audio_not_found' });
       return;

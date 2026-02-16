@@ -6,6 +6,7 @@ export {
   extractionSafetySchema,
   extractionConfidenceSchema,
   sourceQuoteSchema,
+  defaultExtraction,
   type Extraction,
   type ExtractionSafety,
 } from './extraction';

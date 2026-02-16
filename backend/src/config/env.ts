@@ -1,6 +1,6 @@
 /**
  * Environment and secret loading for POV - Companion backend.
- * Prefer env vars; optionally load from Secret Manager in production.
+ * Does NOT throw at import or load time. Validate in handlers or lazily where needed.
  */
 
 export interface EnvConfig {
@@ -23,36 +23,14 @@ export interface EnvConfig {
   FIREBASE_STORAGE_EMULATOR_HOST?: string;
 }
 
-const required = [
-  'GOOGLE_CLOUD_PROJECT',
-  'FIREBASE_STORAGE_BUCKET',
-  'OPENAI_API_KEY',
-  'ELEVENLABS_API_KEY',
-  'ELEVENLABS_VOICE_ID',
-  'WHATSAPP_ACCESS_TOKEN',
-  'WHATSAPP_PHONE_NUMBER_ID',
-  'WHATSAPP_BUSINESS_ACCOUNT_ID',
-  'WHATSAPP_WEBHOOK_VERIFY_TOKEN',
-  'TEMPLATE_OPTIN_NAME',
-  'TEMPLATE_CHECKIN_NAME',
-  'INTERNAL_TOKEN',
-  'BASE_URL',
-] as const;
-
 function getEnv(key: string): string {
   const v = process.env[key];
-  if (v === undefined || v === '') {
-    if (required.includes(key as any)) {
-      throw new Error(`Missing required env: ${key}`);
-    }
-    return '';
-  }
-  return v;
+  return v === undefined || v === '' ? '' : v;
 }
 
 /**
- * Load config from environment. In production, secrets can be injected
- * by Cloud Run (Secret Manager) or set in env.
+ * Load config from environment. Never throws.
+ * Callers must validate required vars when handling requests.
  */
 export function loadConfig(): EnvConfig {
   return {

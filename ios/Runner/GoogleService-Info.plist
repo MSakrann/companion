@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>YOUR_IOS_CLIENT_ID.apps.googleusercontent.com</string>
+	<string>440188507956-1smvilgtshosnnic3oc1effvj1pf1mql.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.YOUR_IOS_CLIENT_ID</string>
+	<string>com.googleusercontent.apps.440188507956-1smvilgtshosnnic3oc1effvj1pf1mql</string>
 	<key>API_KEY</key>
-	<string>YOUR_IOS_API_KEY</string>
+	<string>AIzaSyBg4bOkA8uN3_GaUR6jTFL9Hoo0jaz5Cdk</string>
 	<key>GCM_SENDER_ID</key>
-	<string>YOUR_PROJECT_NUMBER</string>
+	<string>440188507956</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.mycompany.companion</string>
+	<string>com.povegypt.povco</string>
 	<key>PROJECT_ID</key>
-	<string>YOUR_PROJECT_ID</string>
+	<string>companion-6xohii</string>
 	<key>STORAGE_BUCKET</key>
-	<string>YOUR_PROJECT_ID.firebasestorage.app</string>
+	<string>companion-6xohii.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>YOUR_IOS_APP_ID</string>
+	<string>1:440188507956:ios:29fa10b0cef5001a833761</string>
 </dict>
 </plist>

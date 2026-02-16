@@ -33,6 +33,7 @@ import {
   buildCheckInComponents,
 } from '../whatsapp';
 import type { Extraction } from '../validators';
+import { defaultExtraction } from '../validators';
 import type OpenAI from 'openai';
 import type { ElevenLabsClient } from '../elevenlabs';
 import type { WhatsAppApiClient } from '../whatsapp';
@@ -90,7 +91,13 @@ export async function processRecording(
     await createTranscript(transcriptId, uid, recordingId, transcriptText, language);
 
     await updateJobStatus(jobId, 'extracting');
-    const extraction = await extractFromTranscript(transcriptText, { openai: deps.openai });
+    let extraction: Extraction;
+    try {
+      extraction = await extractFromTranscript(transcriptText, { openai: deps.openai });
+    } catch (err) {
+      logger.warn({ err, jobId }, 'Extraction failed; using defaults and continuing');
+      extraction = defaultExtraction;
+    }
     const extractionId = db.collection('extractions').doc().id;
     await createExtraction(extractionId, uid, recordingId, extraction as unknown as Record<string, unknown>);
 

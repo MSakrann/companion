@@ -13,6 +13,7 @@
  */
 
 import { getFirestore, FieldValue, Timestamp } from 'firebase-admin/firestore';
+import { initFirebaseAdmin } from '../lib/firebase';
 import { mergeMemory as mergeMemoryUtil } from '../lib/memoryMerge';
 import type {
   UserRecord,
@@ -29,6 +30,7 @@ import type {
   WhatsAppMessageDirection,
 } from './types';
 
+initFirebaseAdmin();
 const db = getFirestore();
 
 const COLL = {

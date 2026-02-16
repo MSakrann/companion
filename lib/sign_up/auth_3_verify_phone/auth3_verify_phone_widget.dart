@@ -381,8 +381,10 @@ class _Auth3VerifyPhoneWidgetState extends State<Auth3VerifyPhoneWidget>
                                               }
 
                                               context.goNamedAuth(
-                                                  HomePageWidget.routeName,
-                                                  context.mounted);
+                                                HomePageWidget.routeName,
+                                                context.mounted,
+                                                ignoreRedirect: true,
+                                              );
                                             },
                                             text: 'Verify Code',
                                             options: FFButtonOptions(

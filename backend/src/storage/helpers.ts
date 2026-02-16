@@ -4,10 +4,17 @@
 
 import { getStorage } from 'firebase-admin/storage';
 import { getConfig } from '../config';
+import { initFirebaseAdmin } from '../lib/firebase';
 
-const bucketName = () => getConfig().FIREBASE_STORAGE_BUCKET;
+const bucketName = (): string => {
+  const config = getConfig();
+  if (config.FIREBASE_STORAGE_BUCKET) return config.FIREBASE_STORAGE_BUCKET;
+  if (config.GOOGLE_CLOUD_PROJECT) return `${config.GOOGLE_CLOUD_PROJECT}.firebasestorage.app`;
+  return '';
+};
 
 export function getBucket() {
+  initFirebaseAdmin();
   return getStorage().bucket(bucketName());
 }
 

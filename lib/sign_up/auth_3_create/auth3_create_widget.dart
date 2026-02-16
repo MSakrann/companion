@@ -661,14 +661,19 @@ class _Auth3CreateWidgetState extends State<Auth3CreateWidget>
                                                     .text,
                                                 _model.passwordTextController
                                                     .text,
+                                                phoneNumber: _model
+                                                    .emailAddressTextController2
+                                                    .text,
                                               );
                                               if (user == null) {
                                                 return;
                                               }
 
                                               context.goNamedAuth(
-                                                  HomePageWidget.routeName,
-                                                  context.mounted);
+                                                HomePageWidget.routeName,
+                                                context.mounted,
+                                                ignoreRedirect: true,
+                                              );
                                             },
                                             text: 'Create Account',
                                             options: FFButtonOptions(

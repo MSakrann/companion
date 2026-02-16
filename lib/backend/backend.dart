@@ -7,6 +7,8 @@ import 'schema/util/firestore_util.dart';
 
 import 'schema/users_record.dart';
 
+export 'api_config.dart';
+export 'pov_api_client.dart';
 export 'dart:async' show StreamSubscription;
 export 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 export 'package:firebase_core/firebase_core.dart';
@@ -189,7 +191,7 @@ Future<FFFirestorePage<T>> queryCollectionPage<T>(
 }
 
 // Creates a Firestore document representing the logged in user if it doesn't yet exist
-Future maybeCreateUser(User user) async {
+Future maybeCreateUser(User user, {Map<String, dynamic>? extraUserData}) async {
   final userRecord = UsersRecord.collection.doc(user.uid);
   final userExists = await userRecord.get().then((u) => u.exists);
   if (userExists) {
@@ -205,7 +207,8 @@ Future maybeCreateUser(User user) async {
         user.displayName ?? FirebaseAuth.instance.currentUser?.displayName,
     photoUrl: user.photoURL,
     uid: user.uid,
-    phoneNumber: user.phoneNumber,
+    phoneNumber: (extraUserData?['phoneNumber'] as String?) ??
+        user.phoneNumber,
     createdTime: getCurrentTimestamp,
   );
 
@@ -213,7 +216,39 @@ Future maybeCreateUser(User user) async {
   currentUserDocument = UsersRecord.getDocumentFromData(userData, userRecord);
 }
 
-Future updateUserDocument({String? email}) async {
-  await currentUserDocument?.reference
-      .update(createUsersRecordData(email: email));
+Future updateUserDocument({
+  String? email,
+  String? displayName,
+  String? photoUrl,
+}) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+  final ref = UsersRecord.collection.doc(user.uid);
+
+  final data = createUsersRecordData(
+    email: email,
+    displayName: displayName,
+    photoUrl: photoUrl,
+  );
+  if (data.isNotEmpty) {
+    final exists = (await ref.get()).exists;
+    if (exists) {
+      await ref.update(data);
+    } else {
+      await ref.set(createUsersRecordData(
+        email: user.email,
+        displayName: displayName ?? user.displayName,
+        photoUrl: photoUrl ?? user.photoURL,
+        uid: user.uid,
+        createdTime: getCurrentTimestamp,
+      ));
+    }
+  }
+  if (displayName != null || photoUrl != null) {
+    await user.updateProfile(
+      displayName: displayName ?? user.displayName,
+      photoURL: photoUrl ?? user.photoURL,
+    );
+  }
+  currentUserDocument = await UsersRecord.getDocumentOnce(ref);
 }

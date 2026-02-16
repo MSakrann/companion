@@ -32,13 +32,20 @@ export class DefaultElevenLabsClient implements ElevenLabsClient {
       },
       body: JSON.stringify({
         text,
-        model_id: 'eleven_monolingual_v1',
+        model_id: 'eleven_multilingual_v2',
       }),
     });
     if (!res.ok) {
       const errText = await res.text();
       logger.warn({ status: res.status, body: errText }, 'ElevenLabs TTS failed');
-      throw new Error(`ElevenLabs TTS failed: ${res.status}`);
+      let detail = errText;
+      try {
+        const parsed = JSON.parse(errText);
+        if (parsed?.detail?.message) detail = parsed.detail.message;
+      } catch {
+        /* keep errText */
+      }
+      throw new Error(`ElevenLabs TTS failed: ${res.status} - ${detail}`);
     }
     const arrayBuffer = await res.arrayBuffer();
     return Buffer.from(arrayBuffer);

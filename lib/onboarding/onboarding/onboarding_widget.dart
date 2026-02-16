@@ -2,6 +2,7 @@ import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/sign_up/auth_3_create/auth3_create_widget.dart';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -235,7 +236,16 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 16.0),
                         child: FFButtonWidget(
                           onPressed: () {
-                            print('Button pressed ...');
+                            context.pushNamed(
+                              Auth3CreateWidget.routeName,
+                              extra: <String, dynamic>{
+                                '__transition_info__': TransitionInfo(
+                                  hasTransition: true,
+                                  transitionType: PageTransitionType.fade,
+                                  duration: Duration(milliseconds: 300),
+                                ),
+                              },
+                            );
                           },
                           text: 'Sign up',
                           options: FFButtonOptions(

@@ -449,8 +449,10 @@ class _Auth3LoginWidgetState extends State<Auth3LoginWidget>
                                               }
 
                                               context.goNamedAuth(
-                                                  HomePageWidget.routeName,
-                                                  context.mounted);
+                                                HomePageWidget.routeName,
+                                                context.mounted,
+                                                ignoreRedirect: true,
+                                              );
                                             },
                                             text: 'Login',
                                             options: FFButtonOptions(

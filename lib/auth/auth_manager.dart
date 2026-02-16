@@ -21,8 +21,9 @@ mixin EmailSignInManager on AuthManager {
   Future<BaseAuthUser?> createAccountWithEmail(
     BuildContext context,
     String email,
-    String password,
-  );
+    String password, {
+    String? phoneNumber,
+  });
 }
 
 mixin AnonymousSignInManager on AuthManager {

@@ -163,12 +163,16 @@ class FirebaseAuthManager extends AuthManager
   Future<BaseAuthUser?> createAccountWithEmail(
     BuildContext context,
     String email,
-    String password,
-  ) =>
+    String password, {
+    String? phoneNumber,
+  }) =>
       _signInOrCreateAccount(
         context,
         () => emailCreateAccountFunc(email, password),
         'EMAIL',
+        extraUserData: phoneNumber != null && phoneNumber.trim().isNotEmpty
+            ? {'phoneNumber': phoneNumber.trim()}
+            : null,
       );
 
   @override
@@ -303,12 +307,14 @@ class FirebaseAuthManager extends AuthManager
   Future<BaseAuthUser?> _signInOrCreateAccount(
     BuildContext context,
     Future<UserCredential?> Function() signInFunc,
-    String authProvider,
-  ) async {
+    String authProvider, {
+    Map<String, dynamic>? extraUserData,
+  }) async {
     try {
       final userCredential = await signInFunc();
       if (userCredential?.user != null) {
-        await maybeCreateUser(userCredential!.user!);
+        await maybeCreateUser(userCredential!.user!,
+            extraUserData: extraUserData);
       }
       return userCredential == null
           ? null
