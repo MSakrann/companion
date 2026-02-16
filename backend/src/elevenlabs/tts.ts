@@ -8,7 +8,7 @@ import { getLogger } from '../lib/logger';
 const logger = getLogger('elevenlabs');
 
 export interface ElevenLabsClient {
-  generate(text: string): Promise<Buffer>;
+  generate(text: string, languageCode?: string): Promise<Buffer>;
 }
 
 export class DefaultElevenLabsClient implements ElevenLabsClient {
@@ -21,7 +21,7 @@ export class DefaultElevenLabsClient implements ElevenLabsClient {
     this.voiceId = voiceId ?? config.ELEVENLABS_VOICE_ID;
   }
 
-  async generate(text: string): Promise<Buffer> {
+  async generate(text: string, languageCode = 'ar'): Promise<Buffer> {
     const url = `https://api.elevenlabs.io/v1/text-to-speech/${this.voiceId}`;
     const res = await fetch(url, {
       method: 'POST',
@@ -33,6 +33,7 @@ export class DefaultElevenLabsClient implements ElevenLabsClient {
       body: JSON.stringify({
         text,
         model_id: 'eleven_multilingual_v2',
+        language_code: languageCode,
       }),
     });
     if (!res.ok) {
@@ -54,8 +55,9 @@ export class DefaultElevenLabsClient implements ElevenLabsClient {
 
 export async function generateTtsAudio(
   text: string,
-  client?: ElevenLabsClient
+  client?: ElevenLabsClient,
+  languageCode = 'ar'
 ): Promise<Buffer> {
   const c = client ?? new DefaultElevenLabsClient();
-  return c.generate(text);
+  return c.generate(text, languageCode);
 }

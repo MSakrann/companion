@@ -109,7 +109,7 @@ export async function processRecording(
       transcriptText,
       merged,
       extraction,
-      { openai: deps.openai }
+      { openai: deps.openai, detectedLanguage: language }
     );
 
     const responseId = db.collection('responses').doc().id;
