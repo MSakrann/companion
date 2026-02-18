@@ -43,6 +43,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   @override
   void initState() {
     super.initState();
+    if (Platform.isIOS) {
+      _audioPlayer.setPlayerMode(PlayerMode.mediaPlayer);
+    }
     _model = createModel(context, () => HomePageModel());
     _model.setOnUpdate(
       onUpdate: () {
@@ -57,6 +60,18 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     _model.dispose();
     _audioPlayer.dispose();
     super.dispose();
+  }
+
+  Future<void> _playTtsUrl(String url) async {
+    try {
+      await _audioPlayer.play(UrlSource(url));
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not play audio: ${e.toString().replaceFirst('Exception: ', '')}')),
+        );
+      }
+    }
   }
 
   Future<void> _runPipeline(String localRecordingPath) async {
@@ -100,7 +115,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               url: job.ttsAudioUrl,
             );
             if (job.ttsAudioUrl != null && job.ttsAudioUrl!.isNotEmpty) {
-              _audioPlayer.play(UrlSource(job.ttsAudioUrl!));
+              _playTtsUrl(job.ttsAudioUrl!);
             }
             return;
           }
@@ -377,21 +392,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                   ),
                             ),
                             if (_model.pipelineState == homePagePipelineSuccess &&
-                                _model.ttsAudioUrl != null &&
-                                _model.ttsAudioUrl!.isNotEmpty)
+                                (_model.ttsAudioUrl == null || _model.ttsAudioUrl!.isEmpty))
                               Padding(
-                                padding: const EdgeInsets.only(top: 12.0),
-                                child: FlutterFlowIconButton(
-                                  borderRadius: 20.0,
-                                  buttonSize: 48.0,
-                                  icon: Icon(
-                                    Icons.volume_up,
-                                    color: FlutterFlowTheme.of(context).primaryText,
-                                    size: 28.0,
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  'Audio unavailable',
+                                  style: FlutterFlowTheme.of(context).bodySmall.override(
+                                    fontFamily: 'ClashDisplay',
+                                    color: FlutterFlowTheme.of(context).secondaryText,
+                                    fontSize: 14.0,
+                                    letterSpacing: 0.0,
                                   ),
-                                  onPressed: () {
-                                    _audioPlayer.play(UrlSource(_model.ttsAudioUrl!));
-                                  },
                                 ),
                               ),
                           ],

@@ -37,7 +37,10 @@ router.get('/v1/jobs/:jobId', requireAuth, async (req: AuthRequest, res: Respons
       try {
         payload.ttsAudioUrl = await getSignedDownloadUrl(job.result.ttsAudioPath, 60);
       } catch (e) {
-        logger.warn({ jobId, err: e }, 'Failed to get signed URL');
+        logger.warn(
+          { jobId, path: job.result.ttsAudioPath, err: e instanceof Error ? e.message : String(e) },
+          'Failed to get signed URL for TTS audio'
+        );
       }
       payload.transcriptId = job.result.transcriptId;
       payload.responseId = job.result.responseId;
